@@ -1,0 +1,15 @@
+<div class="camera-container">
+    <div>
+        <img 
+            src="{{ photoUrl if photoUrl else url_for('static', filename='images/picture.png') }}" 
+            alt="Captured" 
+            class="photo-logo"
+            onerror="this.src=onErrorImage"
+        />
+    </div>
+    <div>
+        <button type="button" class="take-photo" onclick="takePhoto()">
+            Take photo
+        </button>
+    </div>
+</div>

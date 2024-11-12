@@ -1,0 +1,27 @@
+<nav class="navbar">
+    <img 
+        src="{{ url_for('static', filename='images/SmartHome-logo.png') }}" 
+        alt="Smart Home Logo" 
+        class="navbar-logo"
+        onclick="location.reload();"
+    />
+    <div class="user-menu">
+        <img 
+            src="{{ url_for('static', filename='images/user-icon.png') }}" 
+            alt="User profile icon" 
+            class="user-icon" 
+            onclick="toggleDropdown()"
+        />
+        <div id="dropdown-menu" class="dropdown-menu hidden">
+            <button 
+                id="logout-button" 
+                class="dropdown-item" 
+                data-url="{{ url_for('logout') }}" 
+                type="button"
+                onclick="handleLogout(event)">
+            
+                Logout
+            </button>
+        </div>
+    </div>
+</nav>

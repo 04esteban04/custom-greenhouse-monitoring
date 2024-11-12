@@ -1,0 +1,8 @@
+<button 
+    label="{{label}}"
+    type="button"
+    class="roomButton {{ room }} {{ 'on' if state else 'off' }}" 
+    onclick="toggleLight('{{ room }}')"
+>
+    {{ label }}
+</button>
