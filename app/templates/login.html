@@ -1,25 +1,28 @@
 {% extends "index.html" %}
 
-{% block title %}Login - Smart Home{% endblock %}
+{% block title %}Login - Smart GreenHouse{% endblock %}
 
 {% block content %}
-<div class="login-container">
-    <div class="login-box">
-        <img class="logo" src="{{ url_for('static', filename='images/SmartHome-logo.png') }}" alt="Smart Home Logo"/>
-        
-        <form method="POST" action="{{ url_for('login') }}">
-            {% include 'components/loginFields.html' %}
-        </form>
 
-        {% with messages = get_flashed_messages(with_categories=true) %}
+<div id="login-mainContainer">
+    <div class="login-container">
+        <div class="login-box">
+            <img class="logo" src="{{ url_for('static', filename='images/SmartGreenhouse-logo.png') }}" alt="Smart GreenHouse Logo"/>
+            
+            <form method="POST" action="{{ url_for('login') }}">
+                {% include 'components/loginFields.html' %}
+            </form>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
-                <ul class="flashes">
-                    {% for category, message in messages %}
-                        <li class="{{ category }}">{{ message }}</li>
-                    {% endfor %}
-                </ul>
+            <ul class="flashes">
+                {% for category, message in messages %}
+                <li class="{{ category }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
             {% endif %}
-        {% endwith %}
+            {% endwith %}
+        </div>
     </div>
 </div>
-{% endblock %}
+    {% endblock %}

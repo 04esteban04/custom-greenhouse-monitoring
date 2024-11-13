@@ -1,10 +1,17 @@
 <nav class="navbar">
-    <img 
-        src="{{ url_for('static', filename='images/SmartHome-logo.png') }}" 
-        alt="Smart Home Logo" 
-        class="navbar-logo"
-        onclick="location.reload();"
-    />
+    <div class="navbar-logoContainer">
+        <img 
+            src="{{ url_for('static', filename='images/SmartGreenhouse-logo.png') }}" 
+            alt="Smart GreenHouse Logo" 
+            class="navbar-logo"
+            onclick="location.reload();"
+        />
+
+        <h1 class="navbar-message">
+            Smart GreenHouse Technologies
+        </h1>
+    </div>
+    
     <div class="user-menu">
         <img 
             src="{{ url_for('static', filename='images/user-icon.png') }}" 
