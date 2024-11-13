@@ -6,13 +6,11 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    font-family: 'Arial', sans-serif;
+    font-family: "Gill Sans", sans-serif;
     background: linear-gradient(135deg, #6ded8d, #2a9df4);
 }
 
-
 /* Login page styles */
-
 #root{
     width: 100%;
     height: 100%;
@@ -73,7 +71,6 @@ body {
     padding-left: 10px;
 }
 
-
 .submit-button {
     width: 50%;
     padding: 10px;
@@ -114,9 +111,7 @@ body {
     }
 }
 
-
 /* Home page styles */
-
 .home-container {
     display: flex;
     flex-direction: column;
@@ -126,7 +121,6 @@ body {
 }
 
 /* Navbar styles */
-
 .navbar {
     display: flex;
     justify-content: space-between;
@@ -165,7 +159,6 @@ body {
 
 .navbar-message{
     text-align: center;
-    font-family: "Gill Sans", sans-serif;
     font-size: 25px;
 }
 
@@ -222,7 +215,6 @@ body {
 }
 
 /* Grid container styles */
-
 .grid-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -245,7 +237,6 @@ body {
 }
 
 /* Button styles */
-
 .roomButton {
     color: white;
     font-size: 1.5em;
@@ -278,7 +269,6 @@ body {
 .diningRoom:hover {
     background-color: #A4C2A8;
 }
-
 
 .room2{
     background-color: teal;
@@ -315,7 +305,6 @@ body {
 }
 
 /* Camera styles */
-
 .camera-container {
     grid-column: 1/3;
     grid-row: 1/4;
@@ -422,13 +411,35 @@ body {
     color: white;
 }
 
+/* Footer styles */
+.footer{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: 10px;
+    margin-top: 50px;
+    font-size: large;
+}
 
+.footer .details{
+    margin: 5px;
+}
+
+/* Mobile styles */
 @media (min-width: 100px) and (max-width: 768px) {
 
     body{
         height: auto;
     }
 
+    #login-mainContainer{
+        height: 100vh;
+    }
+    
+    .login-container {
+        height: 90vh;
+    }
+    
     .home-container {
         margin: 20px;
     }
@@ -438,7 +449,7 @@ body {
         grid-template-columns: 1fr 300px 1fr;
         grid-template-rows: 350px repeat(3, 150px);
         grid-gap: 10px;
-        margin-top: 70px;
+        margin-top: 60px;
         margin-bottom: 40px;
 
         width: 90dvw;
@@ -454,7 +465,7 @@ body {
         min-width: 350px;
         max-width: 700px;
         height: 4em;
-        margin-top: 40px;
+        margin-top: 5px;
     }
 
     .navbar-logo {
@@ -473,7 +484,6 @@ body {
     }
 
     /* Button styles */
-    
     .kitchen{
         grid-column: 2/3;
         grid-row: 2/3;
@@ -490,7 +500,6 @@ body {
     }
     
     /* Camera styles */
-    
     .camera-container {
         grid-column: 2/3;
         grid-row: 1/2;
@@ -530,5 +539,10 @@ body {
 
     .lights-toggle {
         display: none;
+    }
+    
+    .footer{
+        margin-top: 10px;
+        font-size: small;
     }
 }
