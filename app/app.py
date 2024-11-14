@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, jsonify
 import bcrypt
 import os
-#import ctypes
 
 app = Flask(__name__)
 app.secret_key = "cR/N{E{4Ta#qUn5"
@@ -13,49 +12,33 @@ hashedPassword = bcrypt.hashpw(storedPassword.encode('utf-8'), bcrypt.gensalt())
 
 photo_path = "./static/images/house.jpg"
 
-"""
-lib_path = os.path.join(os.path.dirname(__file__), "/usr/lib/libcontrol.so.0")
-lib = ctypes.CDLL(lib_path)
-#lib = ctypes.CDLL('/usr/lib/libcontrol.so.0')
-# ../lib/.libs/libcontrol.so
+temperature = [
+    22.5, 23.0, 22.8, 23.5, 24.0, 23.2, 22.9, 23.3, 23.1, 22.7,
+    23.6, 23.4, 23.0, 22.9, 23.3, 23.5, 23.2, 22.8, 23.1, 23.4,
+    23.0, 22.7, 23.3, 23.6, 23.2, 22.9, 23.5, 23.1, 22.6, 23.4,
+    23.7, 22.8, 23.3, 23.0, 23.5, 23.2, 22.9, 23.4, 23.6, 23.1,
+    23.5, 23.0, 22.8, 23.2, 23.3, 22.7, 23.1, 23.4, 23.5, 22.9,
+    23.6, 23.0, 23.2, 23.1, 23.7, 23.3, 22.9, 23.4, 23.0, 22.8,
+    23.3, 23.1, 23.5, 22.9, 23.4, 23.2, 23.0, 23.7, 22.8, 23.3,
+    23.4, 22.9, 23.1, 23.5, 23.2, 23.0, 23.3, 22.8, 23.1, 23.4,
+    23.6, 23.2, 23.0, 22.9, 23.1, 23.3, 23.5, 22.7, 23.2, 23.4,
+    23.0, 22.9, 23.1, 23.3, 23.5, 22.8, 23.4, 23.6, 23.1, 22.7
+]
 
-lib.setPinMode.argtypes = [ctypes.c_int, ctypes.c_char_p]
-lib.setPullMode.argtypes = [ctypes.c_int, ctypes.c_char_p]
-lib.digitalWrite.argtypes = [ctypes.c_int, ctypes.c_char_p]
-lib.digitalRead.restype = ctypes.c_int
-lib.digitalRead.argtypes = [ctypes.c_int]
-lib.blink.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int]
-"""
+humidity = [
+    45, 50, 48, 52, 47, 49, 46, 51, 47, 48,
+    49, 46, 52, 50, 47, 48, 51, 45, 50, 48,
+    49, 47, 46, 50, 52, 48, 47, 49, 51, 46,
+    50, 47, 49, 48, 46, 52, 45, 51, 48, 47,
+    49, 46, 51, 45, 50, 47, 48, 49, 52, 46,
+    50, 48, 47, 49, 51, 45, 52, 47, 48, 49,
+    50, 46, 52, 45, 49, 48, 51, 47, 46, 50,
+    47, 49, 52, 48, 45, 50, 47, 49, 48, 46,
+    52, 50, 47, 49, 51, 46, 48, 52, 45, 50,
+    49, 48, 47, 51, 46, 52, 50, 48, 49, 45
+]
 
-roomPins = {
-    "livingRoom": 15,
-    "diningRoom": 17,
-    "kitchen": 27,
-    "room1": 22,
-    "room2": 23
-}
-
-doorPins = {
-    "mainDoor": 24,
-    "backDoor": 25,
-    "room1Door": 5,
-    "room2Door": 6
-}
-
-lightStates = {
-    "livingRoom": False,
-    "diningRoom": False,
-    "kitchen": False,
-    "room1": False,
-    "room2": False
-}
-
-doorStates = {
-    "mainDoor": False,
-    "backDoor": False,
-    "room1Door": False,
-    "room2Door": False
-}
+data_index = 0
 
 # Basic routes
 @app.route('/')
@@ -85,26 +68,13 @@ def login():
 @app.route('/home')
 def home():
     if 'userSession' in session:
-
-        """
-        TODO:
-
-            An array or dictionary must be created in server to stored the pins 
-            used in hardware to make reference to any light and door.
-
-            The function digitalRead(pinNumber) from library must be used 
-            to get the lights and doors states from hardware.
-
-            After that, all the lights and doors states from server have to 
-            be updated correspondingly
-        
-        """
-
         return render_template(
             'home.html',
-            lightStates = lightStates,
-            doorStates = doorStates,
-            photoUrl = None  
+            photoUrl = None,
+            currentTemperature="---",
+            currentHumidity="---",
+            avgTempValue="---",
+            avgHumValue="---"
         )
     else:
         return redirect(url_for('login'))
@@ -116,75 +86,24 @@ def logout():
 
 
 # Functionality routes
-@app.route('/getStates', methods=['GET'])
-def get_states():
+@app.route('/getData', methods=['GET'])
+def get_data():
+    global data_index
 
-    """
-    for room in lightStates:
-        pin = roomPins[room]  
-        hardware_state = lib.digitalRead(pin) 
-        lightStates[room] = True if hardware_state == 1 else False  
+    current_temperature = temperature[data_index]
+    current_humidity = humidity[data_index]
 
-    for door in doorStates:
-        pin = doorPins[door] 
-        hardware_state = lib.digitalRead(pin) 
-        doorStates[door] = True if hardware_state == 1 else False  
-    """
+    data_index = (data_index + 1) % len(temperature)
 
-    responseData = {
-        "lightStates": lightStates,
-        "doorStates": doorStates
-    }
+    return jsonify(currentTemperature=current_temperature, currentHumidity=current_humidity)
 
-    return jsonify(responseData)
-    
-@app.route('/toggleLight', methods=['POST'])
-def toggleLight():
-    
-    data = request.json
-    room = data.get('room')
-    
-    if room in lightStates:
-        
-        lightStates[room] = not lightStates[room]
+@app.route('/getAvgData', methods=['GET'])
+def get_avg_data():
+    # Calcular los promedios de temperatura y humedad
+    avg_temperature = sum(temperature) / len(temperature) if temperature else 0
+    avg_humidity = sum(humidity) / len(humidity) if humidity else 0
 
-        """
-        pin = roomPins[room]
-        lib.setPinMode(pin, b'op')
-
-        if lightStates[room]:
-            lib.digitalWrite(pin, b"dh") 
-        else:
-            lib.digitalWrite(pin, b"dl")  
-        """
-
-        return jsonify({"lightStates": lightStates})
-    else:
-        return jsonify({"error": "Invalid room"}), 400
-
-@app.route('/toggleAllLights', methods=['POST'])
-def toggleAllLights():
-
-    all_on = all(lightStates.values())
-
-    if all_on:
-        for room in lightStates:
-            lightStates[room] = not all_on
-            """
-            pin = roomPins[room]
-            lib.setPinMode(pin, b'op')
-            lib.digitalWrite(pin, b"dl")
-            """
-    else: 
-        for room in lightStates:
-            lightStates[room] = True
-            """
-            pin = roomPins[room]
-            lib.setPinMode(pin, b'op')
-            lib.digitalWrite(pin, b"dh")
-            """
-            
-    return jsonify(lightStates)
+    return jsonify(avgTempValue=round(avg_temperature, 2), avgHumValue=round(avg_humidity, 2))
 
 @app.route('/takePhoto', methods=['POST'])
 def takePhoto():

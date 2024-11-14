@@ -5,7 +5,7 @@
     </h2>
     
     <p>
-        {{currentValue}} {{sign}}
+        {{currentValue}}
     </p>
 </div>
 {% endif %}
@@ -19,7 +19,7 @@
             </h2>
             
             <p>
-                {{avgTempValue}} °C
+                {{avgTempValue}}
             </p>
         </div>
         
@@ -29,12 +29,12 @@
             </h2>
             
             <p>
-                {{avgHumidityValue}} %
+                {{avgHumValue}}
             </p>
         </div>
     </div>
     
-    <button type="button" class="average-info-button">
+    <button type="button" class="average-info-button" onclick="getAvgData()">
         Get average data
     </button>
 

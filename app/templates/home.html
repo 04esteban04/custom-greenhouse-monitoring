@@ -13,15 +13,15 @@
             {% include 'components/cameraContainer.html' %}
         {% endwith %}
 
-        {% with type="info", label="temperature", title="Temperature", sign="°C", currentValue="---"%}
+        {% with type="info", label="temperature", title="Temperature", currentValue=currentTemperature%}
             {% include 'components/textArea.html' %}
         {% endwith %}
 
-        {% with type="info", label="humidity", title="Humidity", sign="%", currentValue="---"%}
+        {% with type="info", label="humidity", title="Humidity", currentValue=currentHumidity%}
             {% include 'components/textArea.html' %}
         {% endwith %}
 
-        {% with type="infoAvg", avgTempValue="---", avgHumidityValue="---"%}
+        {% with type="infoAvg", avgTempValue=avgTempValue, avgHumValue=avgHumValue%}
             {% include 'components/textArea.html' %}
         {% endwith %}
 
