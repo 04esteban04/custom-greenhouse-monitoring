@@ -1,0 +1,42 @@
+{% if type == 'info' %}
+<div  class="flex-container info-area {{label}} ">
+    <h2>
+        {{title}}
+    </h2>
+    
+    <p>
+        {{currentValue}} {{sign}}
+    </p>
+</div>
+{% endif %}
+
+{% if type == 'infoAvg' %}
+<div  class="flex-container info-area average-info ">
+    <div class="average-info-container">
+        <div class="avg-temperature">
+            <h2>
+                Average Temperature
+            </h2>
+            
+            <p>
+                {{avgTempValue}} °C
+            </p>
+        </div>
+        
+        <div class="avg-humidity">
+            <h2>
+                Average Humidity
+            </h2>
+            
+            <p>
+                {{avgHumidityValue}} %
+            </p>
+        </div>
+    </div>
+    
+    <button type="button" class="average-info-button">
+        Get average data
+    </button>
+
+</div>
+{% endif %}

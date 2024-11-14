@@ -16,7 +16,7 @@ body {
     height: 100%;
 }
 
-#login-mainContainer{
+#login-main-container{
     background: linear-gradient(135deg, #2a9df4, #6ded8d); 
     width: 100%;
     height: 100%;
@@ -135,7 +135,7 @@ body {
     margin-top: 20px;
 }
 
-.navbar-logoContainer{
+.navbar-logo-container{
     display: flex;
     justify-content: center;
     align-items: center;
@@ -144,7 +144,7 @@ body {
     transition: scale 0.3s ease-in-out;
 }
 
-.navbar-logoContainer:hover {
+.navbar-logo-container:hover {
     scale: 1.1;
 }
 
@@ -230,78 +230,89 @@ body {
     max-height: 400px;
 }
 
-.flexContainer{
+.flex-container{
     display: flex;
     align-items: center;
     justify-content: center; 
 }
 
-/* Button styles */
-.roomButton {
-    color: white;
-    font-size: 1.5em;
-
-    width: 100%;
-    height: 100%;
-    
+/* Text area styles */
+.info-area{
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    transition: background-color 0.3s;
+    border: 2px solid #000000;
     cursor: pointer;
 }
 
-.kitchen{
-    background-color: #6d6d6d;
+.temperature{
+    flex-direction: column;
     grid-column: 3/4;
     grid-row: 1/2;
-}
-
-.kitchen:hover {
     background-color: #808080;
+    color: white;
+    transition: background-color 0.2s ease-in-out;
 }
 
-.diningRoom {
-    background-color: #75a37b;
-    color: #333;
+.temperature:hover{
+    background-color: #6d6d6d;
+}
+
+.humidity{
+    flex-direction: column;
     grid-column: 4/5;
     grid-row: 1/2;
+    background-color: #75a37b;
+    color: white;
+    transition: background-color 0.2s ease-in-out;
 }
 
-.diningRoom:hover {
-    background-color: #A4C2A8;
+.humidity:hover{
+    background-color: #5a7c5e;
 }
 
-.room2{
-    background-color: teal;
+.average-info{
+    flex-direction: column;
+    text-align: center;
     grid-column: 3/5;
     grid-row: 2/4;
+    background-color: teal;
+    color: white;
+    transition: background-color 0.2s ease-in-out;
 }
 
-.room2:hover {
-    background-color: #00b3b3;
+.average-info:hover{
+    background-color: rgb(1, 94, 94);
 }
 
-.roomButton.off {
-    color: #ecf0f1;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.616);
+.average-info-container{
+    display: flex;
+    flex-direction: row;
+    margin: 10px;
 }
 
-.roomButton.on {
-    background-color: #f1c40f;
-    color: #2c3e50;
-    box-shadow: 0 0 20px rgba(241, 196, 15, 0.7);
-    animation: flickerButton 0.3s infinite alternate;
+.avg-temperature{
+    padding: 20px;
 }
 
-@keyframes flickerButton {
-    0% {
-        opacity: 1;
-    }
-    50% {
-        opacity: 0.85;
-    }
-    100% {
-        opacity: 1;
-    }
+.avg-humidity{
+    padding: 20px;
+}
+
+.average-info-button{
+    color: white;
+    font-size: 1.5em;
+    background-color: #333;
+    
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.average-info-button:hover {
+    background-color: #5c5c5c;
 }
 
 /* Camera styles */
@@ -340,6 +351,7 @@ body {
     background-color: #333;
     
     margin: 20px;
+    padding: 10px;
     border-radius: 10px;
 
     cursor: pointer;
@@ -348,67 +360,6 @@ body {
 
 .take-photo:hover {
     background-color: #5c5c5c;
-}
-
-
-/* Toggle switch styles */
-
-.lights-toggle {
-    margin-top: 100px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #333;
-    border-radius: 20px;
-    padding: 30px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.616);
-}
-
-.toggle-label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-.toggle-switch {
-    position: absolute;
-    opacity: 0;
-    cursor: pointer;
-}
-
-.slider {
-    position: relative;
-    width: 60px;
-    height: 34px;
-    background-color: #ccc;
-    border-radius: 34px;
-    transition: 0.4s;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 26px;
-    width: 26px;
-    left: 4px;
-    bottom: 4px;
-    background-color: white;
-    border-radius: 50%;
-    transition: 0.4s;
-}
-
-.toggle-switch:checked + .slider {
-    background-color: #4CAF50;
-}
-
-.toggle-switch:checked + .slider:before {
-    transform: translateX(26px);
-}
-
-.toggle-text {
-    margin-left: 20px;
-    font-size: 1.3em;
-    color: white;
 }
 
 /* Footer styles */
@@ -432,7 +383,8 @@ body {
         height: auto;
     }
 
-    #login-mainContainer{
+    /* Login styles */
+    #login-main-container{
         height: 100vh;
     }
     
@@ -440,6 +392,7 @@ body {
         height: 90vh;
     }
     
+    /* Home styles */
     .home-container {
         margin: 20px;
     }
@@ -447,7 +400,7 @@ body {
     .grid-container {
         display: grid;
         grid-template-columns: 1fr 300px 1fr;
-        grid-template-rows: 350px repeat(3, 150px);
+        grid-template-rows: 350px repeat(2, 150px) 250px;
         grid-gap: 10px;
         margin-top: 60px;
         margin-bottom: 40px;
@@ -457,7 +410,7 @@ body {
         max-width: 700px;
         height: 100%;
         min-height: 400px;
-        max-height: 850px;
+        max-height: 950px;
     }
     
     .navbar {
@@ -483,23 +436,26 @@ body {
 
     }
 
-    /* Button styles */
-    .kitchen{
+    .temperature{
         grid-column: 2/3;
         grid-row: 2/3;
     }
 
-    .diningRoom {
+    .humidity {
         grid-column: 2/3;
         grid-row: 3/4;
     }
 
-    .room2{
+    .average-info{
         grid-column: 2/3;
         grid-row: 4/5;
     }
     
-    /* Camera styles */
+    .average-info-button{
+        margin-bottom: 40px;
+        padding: 10px;
+    }
+    
     .camera-container {
         grid-column: 2/3;
         grid-row: 1/2;
@@ -537,10 +493,6 @@ body {
         background-color: #5c5c5c;
     }
 
-    .lights-toggle {
-        display: none;
-    }
-    
     .footer{
         margin-top: 10px;
         font-size: small;

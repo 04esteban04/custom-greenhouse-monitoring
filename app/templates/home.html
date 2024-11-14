@@ -13,21 +13,19 @@
             {% include 'components/cameraContainer.html' %}
         {% endwith %}
 
-        {% with room="diningRoom", label="Dining Room", state=lightStates.diningRoom %}
-            {% include 'components/lightButton.html' %}
+        {% with type="info", label="temperature", title="Temperature", sign="°C", currentValue="---"%}
+            {% include 'components/textArea.html' %}
         {% endwith %}
 
-        {% with room="kitchen", label="Kitchen", state=lightStates.kitchen %}
-            {% include 'components/lightButton.html' %}
+        {% with type="info", label="humidity", title="Humidity", sign="%", currentValue="---"%}
+            {% include 'components/textArea.html' %}
         {% endwith %}
-        
-        {% with room="room2", label="Room 2", state=lightStates.room2 %}
-                {% include 'components/lightButton.html' %}
-            {% endwith %}
+
+        {% with type="infoAvg", avgTempValue="---", avgHumidityValue="---"%}
+            {% include 'components/textArea.html' %}
+        {% endwith %}
 
     </div>
-
-    {% include 'components/toggleLights.html' %}
 
     {% include 'components/footer.html' %}
 

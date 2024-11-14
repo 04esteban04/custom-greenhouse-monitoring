@@ -1,6 +1,7 @@
-document.addEventListener('DOMContentLoaded', () => {
+/* document.addEventListener('DOMContentLoaded', () => {
     syncStates();
 });
+ */
 
 function takePhoto() {
     fetch('/takePhoto', {
