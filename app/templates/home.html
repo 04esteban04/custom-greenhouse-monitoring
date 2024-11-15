@@ -9,8 +9,16 @@
 
     <div class="grid-container">
         
-        {% with onErrorImage="{{ url_for('static', filename='images/picture.png') }}" %}        
+<!--         {% with onErrorImage="{{ url_for('static', filename='images/picture.png') }}" %}        
             {% include 'components/cameraContainer.html' %}
+        {% endwith %} -->
+
+        {% with type="info", label="notifications", title="Notifications", currentValue=""%}
+            {% include 'components/textArea.html' %}
+        {% endwith %}
+
+        {% with title="Light Mode"%}
+            {% include 'components/switch.html' %}
         {% endwith %}
 
         {% with type="info", label="temperature", title="Temperature", currentValue=currentTemperature%}
@@ -21,9 +29,13 @@
             {% include 'components/textArea.html' %}
         {% endwith %}
 
-        {% with type="infoAvg", avgTempValue=avgTempValue, avgHumValue=avgHumValue%}
-            {% include 'components/textArea.html' %}
+        {% with light_state=light_state%}
+            {% include 'components/lightState.html' %}
         {% endwith %}
+
+        <!-- {% with type="infoAvg", avgTempValue=avgTempValue, avgHumValue=avgHumValue%}
+            {% include 'components/textArea.html' %}
+        {% endwith %} -->
 
     </div>
 

@@ -1,0 +1,19 @@
+<div class="switch-container info-area">
+    
+    <h2 for="modeSwitch" class="label-text">{{title}}</h2>
+    
+    <div class="switch-wrapper">
+        
+        <h3 class="switch-label manual-label">Manual</h3>
+        
+        <label class="switch">
+            <input type="checkbox" id="modeSwitch" 
+                onchange="updateSwitchState()" 
+                {% if switch_state %} checked {% endif %}>
+            <span class="slider"></span>
+        </label>
+        
+        <h3 class="switch-label auto-label">Auto</h3>
+    </div>
+
+</div>

@@ -1,0 +1,15 @@
+<div class="light-state-container">
+    
+    <div class="flex-container info-area light-button-info {{ 'hidden-info' if switch_state }}">
+        <h2>Estado de la Luz</h2>
+        <p>{{ light_state }}</p>
+    </div>
+    
+    <button 
+        type="button" 
+        class="flex-container light-button {{ 'on' if light_state else 'off' }} {{ 'hidden-info' if switch_state }}" 
+        onclick="updateLightButtonState()">
+            Change light state
+    </button>
+
+</div>

@@ -12,33 +12,14 @@ hashedPassword = bcrypt.hashpw(storedPassword.encode('utf-8'), bcrypt.gensalt())
 
 photo_path = "./static/images/house.jpg"
 
-temperature = [
-    22.5, 23.0, 22.8, 23.5, 24.0, 23.2, 22.9, 23.3, 23.1, 22.7,
-    23.6, 23.4, 23.0, 22.9, 23.3, 23.5, 23.2, 22.8, 23.1, 23.4,
-    23.0, 22.7, 23.3, 23.6, 23.2, 22.9, 23.5, 23.1, 22.6, 23.4,
-    23.7, 22.8, 23.3, 23.0, 23.5, 23.2, 22.9, 23.4, 23.6, 23.1,
-    23.5, 23.0, 22.8, 23.2, 23.3, 22.7, 23.1, 23.4, 23.5, 22.9,
-    23.6, 23.0, 23.2, 23.1, 23.7, 23.3, 22.9, 23.4, 23.0, 22.8,
-    23.3, 23.1, 23.5, 22.9, 23.4, 23.2, 23.0, 23.7, 22.8, 23.3,
-    23.4, 22.9, 23.1, 23.5, 23.2, 23.0, 23.3, 22.8, 23.1, 23.4,
-    23.6, 23.2, 23.0, 22.9, 23.1, 23.3, 23.5, 22.7, 23.2, 23.4,
-    23.0, 22.9, 23.1, 23.3, 23.5, 22.8, 23.4, 23.6, 23.1, 22.7
-]
+temperature = [22.5, 23.0, 22.8, 23.5]
 
-humidity = [
-    45, 50, 48, 52, 47, 49, 46, 51, 47, 48,
-    49, 46, 52, 50, 47, 48, 51, 45, 50, 48,
-    49, 47, 46, 50, 52, 48, 47, 49, 51, 46,
-    50, 47, 49, 48, 46, 52, 45, 51, 48, 47,
-    49, 46, 51, 45, 50, 47, 48, 49, 52, 46,
-    50, 48, 47, 49, 51, 45, 52, 47, 48, 49,
-    50, 46, 52, 45, 49, 48, 51, 47, 46, 50,
-    47, 49, 52, 48, 45, 50, 47, 49, 48, 46,
-    52, 50, 47, 49, 51, 46, 48, 52, 45, 50,
-    49, 48, 47, 51, 46, 52, 50, 48, 49, 45
-]
+humidity = [45, 50, 48, 52, 47]
 
 data_index = 0
+
+switch_state = False
+light_state = False
 
 # Basic routes
 @app.route('/')
@@ -74,7 +55,9 @@ def home():
             currentTemperature="---",
             currentHumidity="---",
             avgTempValue="---",
-            avgHumValue="---"
+            avgHumValue="---",
+            switch_state=switch_state,
+            light_state=light_state
         )
     else:
         return redirect(url_for('login'))
@@ -86,8 +69,29 @@ def logout():
 
 
 # Functionality routes
-@app.route('/getData', methods=['GET'])
+
+@app.route('/get_data', methods=['GET'])
 def get_data():
+    return jsonify(switch_state=switch_state, light_state=light_state)
+
+@app.route('/update_switch', methods=['POST'])
+def update_switch():
+    global switch_state
+    switch_state = request.json.get('switch_state', False)
+    return jsonify(success=True)
+
+@app.route('/get_light_state', methods=['GET'])
+def get_light_state():
+    return jsonify(light_state=light_state)
+
+@app.route('/update_light_state', methods=['POST'])
+def update_light_state():
+    global light_state
+    light_state = not light_state
+    return jsonify(light_state=light_state)
+
+@app.route('/get_sensor_data', methods=['GET'])
+def get_sensor_data():
     global data_index
 
     current_temperature = temperature[data_index]
