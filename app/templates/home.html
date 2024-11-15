@@ -9,11 +9,7 @@
 
     <div class="grid-container">
         
-<!--         {% with onErrorImage="{{ url_for('static', filename='images/picture.png') }}" %}        
-            {% include 'components/cameraContainer.html' %}
-        {% endwith %} -->
-
-        {% with type="info", label="notifications", title="Notifications", currentValue=""%}
+        {% with label="notifications", title="Notifications", currentValue=""%}
             {% include 'components/textArea.html' %}
         {% endwith %}
 
@@ -21,21 +17,17 @@
             {% include 'components/switch.html' %}
         {% endwith %}
 
-        {% with type="info", label="temperature", title="Temperature", currentValue=currentTemperature%}
+        {% with label="temperature", title="Temperature", currentValue=currentTemperature%}
             {% include 'components/textArea.html' %}
         {% endwith %}
 
-        {% with type="info", label="humidity", title="Humidity", currentValue=currentHumidity%}
+        {% with label="humidity", title="Humidity", currentValue=currentHumidity%}
             {% include 'components/textArea.html' %}
         {% endwith %}
 
-        {% with light_state=light_state%}
+        {% with light_state=light_state %}
             {% include 'components/lightState.html' %}
         {% endwith %}
-
-        <!-- {% with type="infoAvg", avgTempValue=avgTempValue, avgHumValue=avgHumValue%}
-            {% include 'components/textArea.html' %}
-        {% endwith %} -->
 
     </div>
 

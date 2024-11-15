@@ -16,7 +16,7 @@
             src="{{ url_for('static', filename='images/user-icon.png') }}" 
             alt="User profile icon" 
             class="user-icon" 
-            onclick="toggleDropdown()"
+            onclick="toggle_dropdown()"
         />
         <div id="dropdown-menu" class="dropdown-menu hidden">
             <button 
@@ -24,7 +24,7 @@
                 class="dropdown-item" 
                 data-url="{{ url_for('logout') }}" 
                 type="button"
-                onclick="handleLogout(event)">
+                onclick="handle_logout(event)">
             
                 Logout
             </button>

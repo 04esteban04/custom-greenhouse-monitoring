@@ -1,9 +1,12 @@
+let currentRotation = 180; 
+let autoUpdateInterval = null;
+
 document.addEventListener('DOMContentLoaded', () => {
-    /* startDataUpdates(); */
-    getData();
+    get_sensor_data();
+    update_switch_state();
 });
 
-function getData(){
+function get_data(){
     fetch('/get_data', {
         method: 'GET'
     })    
@@ -15,11 +18,22 @@ function getData(){
         lightInfoDisplay = document.getElementsByClassName('light-button-info')[0]
         lightInfoDisplay.classList.toggle('hidden-info', !data.switch_state);
 
-        lightInfoDisplay.querySelector('p').textContent = data.light_state;
-    });
+        lightInfoDisplay = document.getElementsByClassName('light-button-info')[0];
+        lightInfoDisplay.querySelector('div').classList.toggle('auto-on', data.light_state);
+        lightInfoDisplay.querySelector('div').classList.toggle('auto-off', !data.light_state);
+        
+        let light_icon = document.getElementsByClassName('light-icon')[0];
+        if (!data.switch_state && data.light_state){
+            currentRotation += 180;
+        } else{
+            currentRotation = 180;
+        }
+        
+        light_icon.style.transform = `rotate(${currentRotation}deg)`;
+    }); 
 } 
 
-function startDataUpdates() {
+function get_sensor_data() {
     setInterval(() => {
         fetch('/get_sensor_data', {
                 method: 'GET'
@@ -49,13 +63,13 @@ function startDataUpdates() {
     }, 5000); 
 }
 
-function updateSwitchState() {
+function update_switch_state() {
     const modeSwitch = document.getElementById('modeSwitch');
     const switchState = modeSwitch.checked;
 
-    updateLabelColors();
+    update_label_colors();
 
-    fetch('/update_switch', {
+    fetch('/set_switch', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -63,10 +77,16 @@ function updateSwitchState() {
         body: JSON.stringify({ switch_state: switchState })
     });    
 
-    getData();
+    get_data();
+    
+    if (switchState){
+        start_auto_update();
+    } else{
+        stop_auto_update();
+    }
 }
 
-function updateLabelColors() {
+function update_label_colors() {
     const modeSwitch = document.getElementById('modeSwitch');
     const manualLabel = document.querySelector('.manual-label');
     const autoLabel = document.querySelector('.auto-label');
@@ -80,8 +100,23 @@ function updateLabelColors() {
     }
 }
 
-function updateLightButtonState() {
-    fetch('/update_light_state', {
+function start_auto_update() {
+    if (autoUpdateInterval !== null) return;
+
+    autoUpdateInterval = setInterval(() => {
+        get_data();
+    }, 3000); 
+}
+
+function stop_auto_update() {
+    if (autoUpdateInterval !== null) {
+        clearInterval(autoUpdateInterval);
+        autoUpdateInterval = null;
+    }
+}
+
+function update_light_button_state() {
+    fetch('/set_light_state', {
         method: 'POST',
     })
     .then(response => response.json())
@@ -89,59 +124,34 @@ function updateLightButtonState() {
         button = document.getElementsByClassName('light-button')[0]
         button.classList.toggle('on', data.light_state);
         button.classList.toggle('off', !data.light_state);
+
+        light_icon = document.getElementsByClassName('light-icon')[0];
+        light_icon.classList.toggle('on', data.light_state);
+        light_icon.classList.toggle('off', !data.light_state);
+
+        if (data.light_state) {
+            currentRotation += 180;
+        } else {
+            currentRotation = 180;
+        }
+
+        light_icon.style.transform = `rotate(${currentRotation}deg)`;
+        
     });
+
+    get_data();
 }
 
-function toggleDropdown() {
+function toggle_dropdown() {
     const dropdownMenu = document.getElementById('dropdown-menu');
     dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
     dropdownMenu.classList.toggle('hidden');
 }
 
-function handleLogout(event) {
+function handle_logout(event) {
     const logoutButton = event.target;
     const logoutUrl = logoutButton.getAttribute('data-url');
     window.location.href = logoutUrl;
 }
 
-function takePhoto() {
-    fetch('/takePhoto', {
-        method: 'POST'
-    })
-    .then(response => response.blob())
-    .then(blob => {
-        const imageObjectURL = URL.createObjectURL(blob);
-        document.querySelector('.photo-logo').src = imageObjectURL;
-    })
-    .catch(error => {
-        alert('Error taking photo');
-    });
-}
-
-function getAvgData() {
-    fetch('/getAvgData', {
-            method: 'GET'
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data) {
-                const avgTemperatureValue = data.avgTempValue;
-                const avgHumidityValue = data.avgHumValue;
-
-                const avgTemperatureArea = document.querySelector('.average-info .avg-temperature p');
-                if (avgTemperatureArea) {
-                    avgTemperatureArea.textContent = `${avgTemperatureValue} °C`;
-                }
-
-                const avgHumidityArea = document.querySelector('.average-info .avg-humidity p');
-                if (avgHumidityArea) {
-                    avgHumidityArea.textContent = `${avgHumidityValue} %`;
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching average data:', error);
-        });
-}
-
-window.onload = updateLabelColors;
+window.onload = update_label_colors;
