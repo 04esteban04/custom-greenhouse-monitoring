@@ -86,10 +86,11 @@ def get_data():
 
 @app.route('/get_sensor_data', methods=['GET'])
 def get_sensor_data():
-    global data_index, spi
+    global data_index, spi, switch_state
     
     sensor_humidity = read_sensor()
     
+    # Read data from sensor
     if (spi is not None and sensor_humidity is not None):
         current_humidity = sensor_humidity
     else:
@@ -97,6 +98,10 @@ def get_sensor_data():
 
     current_temperature = temperature[data_index]
     data_index = (data_index + 1) % len(temperature)
+
+    # Auto mode validation
+    if (switch_state):
+        auto_turn_lights(current_humidity, current_temperature)
 
     set_notifications(current_temperature, current_humidity)
 
@@ -163,6 +168,14 @@ def read_sensor():
 
     except:
         return None
+
+def auto_turn_lights(current_humidity, current_temperature):
+    global light_state
+
+    if (current_humidity > 60 or current_temperature < 20):
+        light_state = True 
+    elif (current_humidity < 60 or current_temperature < 30):
+        light_state = False 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)

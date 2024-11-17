@@ -20,6 +20,12 @@ function update_light_info(data){
 
     lightInfoButton = document.getElementsByClassName('light-button')[0]
     lightInfoButton.classList.toggle('hidden-info', data.switch_state);
+    lightInfoButton.classList.toggle('on', data.light_state);
+    lightInfoButton.classList.toggle('off', !data.light_state);
+    
+    light_icon = document.getElementsByClassName('light-icon')[0];
+    light_icon.classList.toggle('on', data.light_state);
+    light_icon.classList.toggle('off', !data.light_state);
 
     lightInfoDisplay = document.getElementsByClassName('light-button-info')[0]
     lightInfoDisplay.classList.toggle('hidden-info', !data.switch_state);
@@ -28,7 +34,6 @@ function update_light_info(data){
     lightInfoDisplay.querySelector('div').classList.toggle('auto-on', data.light_state);
     lightInfoDisplay.querySelector('div').classList.toggle('auto-off', !data.light_state);
     
-    let light_icon = document.getElementsByClassName('light-icon')[0];
     if (!data.switch_state && data.light_state){
         currentRotation += 180;
     } else{
