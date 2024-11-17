@@ -16,6 +16,11 @@ data_index = 0
 switch_state = False
 light_state = False
 
+notifications = ["General status: ---", 
+                "Temperature status: ---",
+                "Humidity status: ---", 
+                "Light status: ---"]
+
 # Basic routes
 @app.route('/')
 def index():
@@ -66,7 +71,10 @@ def logout():
 # Functionality routes
 @app.route('/get_data', methods=['GET'])
 def get_data():
-    return jsonify(switch_state=switch_state, light_state=light_state)
+    return jsonify(
+        switch_state=switch_state, 
+        light_state=light_state,
+        notifications=notifications)
 
 @app.route('/get_sensor_data', methods=['GET'])
 def get_sensor_data():
@@ -76,6 +84,8 @@ def get_sensor_data():
     current_humidity = humidity[data_index]
 
     data_index = (data_index + 1) % len(temperature)
+
+    set_notifications(current_temperature, current_humidity)
 
     return jsonify(currentTemperature=current_temperature, currentHumidity=current_humidity)
 
@@ -90,6 +100,26 @@ def set_light_state():
     global light_state
     light_state = not light_state
     return jsonify(light_state=light_state)
+
+# Helper functions
+def set_notifications(current_temperature, current_humidity):
+    notifications[0] = f"General status: All systems operational."
+    if current_temperature < 20:
+        notifications[1] = f"Temperature status: Low ({current_temperature} °C). Consider turning on the lights."
+    elif current_temperature > 30:
+        notifications[1] = f"Temperature status: High ({current_temperature} °C). Monitor closely."
+    else:
+        notifications[1] = f"Temperature status: Optimal ({current_temperature} °C)."
+
+    if current_humidity < 40:
+        notifications[2] = f"Humidity status: Low ({current_humidity} %). Consider watering the plants."
+    elif current_humidity > 70:
+        notifications[2] = f"Humidity status: High ({current_humidity} %)."
+    else:
+        notifications[2] = f"Humidity status: Optimal ({current_humidity} %)."
+
+    notifications[3] = f"Light status: {'On' if light_state else 'Off'}."
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)

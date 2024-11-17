@@ -9,9 +9,7 @@
 
     <div class="grid-container">
         
-        {% with label="notifications", title="Notifications", currentValue=""%}
-            {% include 'components/textArea.html' %}
-        {% endwith %}
+        {% include 'components/notification.html' %}
 
         {% with title="Light Mode"%}
             {% include 'components/switch.html' %}

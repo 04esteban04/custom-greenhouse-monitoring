@@ -14,7 +14,7 @@
     <button 
         type="button" 
         class="flex-container light-button {{ 'on' if light_state else 'off' }} {{ 'hidden-info' if switch_state }}" 
-        onclick="update_light_button_state()">
+        onclick="set_light_button_state()">
             <img 
                 src="{{ url_for('static', filename='images/light-icon.png') }}" 
                 alt="Light icon" 

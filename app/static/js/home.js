@@ -1,37 +1,59 @@
 let currentRotation = 180; 
-let autoUpdateInterval = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     get_sensor_data();
-    update_switch_state();
+    set_switch_state();
 });
 
-function get_data(){
+function update_data(){
     fetch('/get_data', {
         method: 'GET'
     })    
     .then(response => response.json())
     .then(data => {
-        lightInfoButton = document.getElementsByClassName('light-button')[0]
-        lightInfoButton.classList.toggle('hidden-info', data.switch_state);
-
-        lightInfoDisplay = document.getElementsByClassName('light-button-info')[0]
-        lightInfoDisplay.classList.toggle('hidden-info', !data.switch_state);
-
-        lightInfoDisplay = document.getElementsByClassName('light-button-info')[0];
-        lightInfoDisplay.querySelector('div').classList.toggle('auto-on', data.light_state);
-        lightInfoDisplay.querySelector('div').classList.toggle('auto-off', !data.light_state);
-        
-        let light_icon = document.getElementsByClassName('light-icon')[0];
-        if (!data.switch_state && data.light_state){
-            currentRotation += 180;
-        } else{
-            currentRotation = 180;
-        }
-        
-        light_icon.style.transform = `rotate(${currentRotation}deg)`;
+        update_light_info(data);
+        update_notifications(data);
     }); 
 } 
+
+function update_light_info(data){
+
+    lightInfoButton = document.getElementsByClassName('light-button')[0]
+    lightInfoButton.classList.toggle('hidden-info', data.switch_state);
+
+    lightInfoDisplay = document.getElementsByClassName('light-button-info')[0]
+    lightInfoDisplay.classList.toggle('hidden-info', !data.switch_state);
+
+    lightInfoDisplay = document.getElementsByClassName('light-button-info')[0];
+    lightInfoDisplay.querySelector('div').classList.toggle('auto-on', data.light_state);
+    lightInfoDisplay.querySelector('div').classList.toggle('auto-off', !data.light_state);
+    
+    let light_icon = document.getElementsByClassName('light-icon')[0];
+    if (!data.switch_state && data.light_state){
+        currentRotation += 180;
+    } else{
+        currentRotation = 180;
+    }
+    
+    light_icon.style.transform = `rotate(${currentRotation}deg)`;
+
+}
+
+function update_notifications(data){
+    
+    const notificationsArea = document.querySelector('.notifications');
+    
+    if (notificationsArea) {
+        notificationsArea.innerHTML = ""; 
+        data.notifications.forEach(notification => {
+            const notificationElement = document.createElement('div');
+            notificationElement.classList.add('notification');
+            notificationElement.textContent = notification;
+            notificationsArea.appendChild(notificationElement);
+        });
+    }
+
+}
 
 function get_sensor_data() {
     setInterval(() => {
@@ -56,14 +78,18 @@ function get_sensor_data() {
                 } else {
                     console.error('Element for humidity display not found');
                 }
+                
+                update_data();
+
             })
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
     }, 5000); 
+
 }
 
-function update_switch_state() {
+function set_switch_state() {
     const modeSwitch = document.getElementById('modeSwitch');
     const switchState = modeSwitch.checked;
 
@@ -77,13 +103,8 @@ function update_switch_state() {
         body: JSON.stringify({ switch_state: switchState })
     });    
 
-    get_data();
-    
-    if (switchState){
-        start_auto_update();
-    } else{
-        stop_auto_update();
-    }
+    update_data();
+
 }
 
 function update_label_colors() {
@@ -100,22 +121,7 @@ function update_label_colors() {
     }
 }
 
-function start_auto_update() {
-    if (autoUpdateInterval !== null) return;
-
-    autoUpdateInterval = setInterval(() => {
-        get_data();
-    }, 3000); 
-}
-
-function stop_auto_update() {
-    if (autoUpdateInterval !== null) {
-        clearInterval(autoUpdateInterval);
-        autoUpdateInterval = null;
-    }
-}
-
-function update_light_button_state() {
+function set_light_button_state() {
     fetch('/set_light_state', {
         method: 'POST',
     })
@@ -139,7 +145,7 @@ function update_light_button_state() {
         
     });
 
-    get_data();
+    update_data();
 }
 
 function toggle_dropdown() {
