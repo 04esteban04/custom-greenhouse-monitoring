@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import bcrypt
+import spidev
 
 app = Flask(__name__)
 app.secret_key = "cR/N{E{4Ta#qUn5"
@@ -9,8 +10,10 @@ storedPassword = "admin123"
 
 hashedPassword = bcrypt.hashpw(storedPassword.encode('utf-8'), bcrypt.gensalt())
 
-temperature = [22.5, 23.0, 22.8, 23.5]
-humidity = [45, 50, 48, 52, 47]
+spi = None
+
+temperature = [15.0, 18.5, 22.0, 23.1, 23.5, 25.0, 28.0, 30.5, 33.0, 35.0]
+humidity = [85, 78, 72, 65, 55, 50, 45, 40, 30, 25]
 data_index = 0
 
 switch_state = False
@@ -48,7 +51,12 @@ def login():
 
 @app.route('/home')
 def home():
+    global spi
+
     if 'userSession' in session:
+        
+        spi = set_SPI_config()
+
         return render_template(
             'home.html',
             photoUrl = None,
@@ -78,16 +86,23 @@ def get_data():
 
 @app.route('/get_sensor_data', methods=['GET'])
 def get_sensor_data():
-    global data_index
+    global data_index, spi
+    
+    sensor_humidity = read_sensor()
+    
+    if (spi is not None and sensor_humidity is not None):
+        current_humidity = sensor_humidity
+    else:
+        current_humidity = humidity[data_index]
 
     current_temperature = temperature[data_index]
-    current_humidity = humidity[data_index]
-
     data_index = (data_index + 1) % len(temperature)
 
     set_notifications(current_temperature, current_humidity)
 
-    return jsonify(currentTemperature=current_temperature, currentHumidity=current_humidity)
+    return jsonify(
+        currentTemperature=current_temperature, 
+        currentHumidity=current_humidity)
 
 @app.route('/set_switch', methods=['POST'])
 def set_switch():
@@ -114,12 +129,40 @@ def set_notifications(current_temperature, current_humidity):
     if current_humidity < 40:
         notifications[2] = f"Humidity status: Low ({current_humidity} %). Consider watering the plants."
     elif current_humidity > 70:
-        notifications[2] = f"Humidity status: High ({current_humidity} %)."
+        notifications[2] = f"Humidity status: High ({current_humidity} %). Consider draining water."
     else:
         notifications[2] = f"Humidity status: Optimal ({current_humidity} %)."
 
     notifications[3] = f"Light status: {'On' if light_state else 'Off'}."
 
+def set_SPI_config():
+    try:
+        spi = spidev.SpiDev()
+        spi.open(0, 0)  # bus 0, device 0
+        spi.max_speed_hz = 1350000
+        return spi
+    except:
+        return None
+
+def read_sensor():
+    global spi
+
+    try:
+        adc_channel = 0 
+        adc_response = spi.xfer2([1, (8 + adc_channel) << 4, 0])  
+        raw_value = ((adc_response[1] & 3) << 8) + adc_response[2]
+        
+        if (raw_value < 277):
+            humidity_percentage = 80
+        elif (277 < raw_value < 380):
+            humidity_percentage = 50
+        else:
+            humidity_percentage = 30
+            
+        return humidity_percentage
+
+    except:
+        return None
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)

@@ -281,6 +281,11 @@ body {
     cursor: auto;
 }
 
+.notification-header{
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
 .notifications {
     display: flex;
     flex-direction: column;
