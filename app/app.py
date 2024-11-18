@@ -27,7 +27,7 @@ notifications = ["General status: ---",
                 "Humidity status: ---", 
                 "Time of day: ---"]
 
-lib_path = os.path.join(os.path.dirname(__file__), "/usr/lib/greenhouse.so")
+lib_path = os.path.join(os.path.dirname(__file__), "/usr/lib/libgreenhouse.so")
 lib = ctypes.CDLL(lib_path)
 lib.is_day.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int, ctypes.c_int]
 lib.is_day.restype = ctypes.c_int
