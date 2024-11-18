@@ -20,7 +20,6 @@ data_index = 0
 
 switch_state = False
 light_state = False
-day_state =  0
 
 notifications = ["General status: ---", 
                 "Temperature status: ---",
@@ -107,11 +106,24 @@ def get_sensor_data():
     current_temperature = temperature[data_index]
     data_index = (data_index + 1) % len(temperature)
 
-    get_daytime()
+    day_state = 0
+
+    try:
+        day_state = lib.is_day(
+		    ctypes.c_char_p(b'imagen2.jpg'),
+		    ctypes.c_char_p(b'imagen2.raw'),
+		    ctypes.c_int(1920),
+		    ctypes.c_int(1080)
+		)
+    except OSError as e:
+        print(e)
+        notifications[3] = "Time of day: Error"
+
+    get_daytime(day_state)
     
     # Auto mode validation
     if (switch_state):
-        auto_turn_lights(current_humidity, current_temperature)
+        auto_turn_lights(day_state)
     
 
     set_notifications(current_temperature, current_humidity)
@@ -178,34 +190,22 @@ def read_sensor():
     except:
         return None
 
-def auto_turn_lights(current_humidity, current_temperature):
-    global day_state
+def auto_turn_lights(day_state):
+    global light_state
 
     if (day_state):
         light_state = False 
     else:
         light_state = True 
 
-def get_daytime():
-    global notifications, day_state
-
-    try:
-        day_state = lib.is_day(
-		    ctypes.c_char_p(b'imagen2.jpg'),
-		    ctypes.c_char_p(b'imagen2.raw'),
-		    ctypes.c_int(1920),
-		    ctypes.c_int(1080)
-		)
-
-        if (day_state):
-            notifications[3] = "Time of day: It is daytime!"
-        elif(not day_state):
-            notifications[3] = "Time of day: It is night time!"
-        else:
-            notifications[3] = "Time of day: ---"
-    except OSError as e:
-        print(e)
-        notifications[3] = "Time of day: Error"
+def get_daytime(day_state):
+    global notifications
+    if (day_state):
+        notifications[3] = "Time of day: It is daytime!"
+    elif(not day_state):
+        notifications[3] = "Time of day: It is night time!"
+    else:
+        notifications[3] = "Time of day: ---"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
