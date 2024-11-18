@@ -20,6 +20,7 @@ data_index = 0
 
 switch_state = False
 light_state = False
+day_state =  0
 
 notifications = ["General status: ---", 
                 "Temperature status: ---",
@@ -106,11 +107,12 @@ def get_sensor_data():
     current_temperature = temperature[data_index]
     data_index = (data_index + 1) % len(temperature)
 
+    get_daytime()
+    
     # Auto mode validation
     if (switch_state):
         auto_turn_lights(current_humidity, current_temperature)
     
-    get_daytime()
 
     set_notifications(current_temperature, current_humidity)
 
@@ -177,27 +179,33 @@ def read_sensor():
         return None
 
 def auto_turn_lights(current_humidity, current_temperature):
-    global light_state
+    global day_state
 
-    if (current_humidity > 60 or current_temperature < 20):
-        light_state = True 
-    elif (current_humidity < 60 or current_temperature < 30):
+    if (day_state):
         light_state = False 
+    else:
+        light_state = True 
 
 def get_daytime():
-    global notifications
+    global notifications, day_state
 
     try:
-        day_state = lib.is_day("imagen.jpg", "imagen.raw", 1920, 1080)
+        day_state = lib.is_day(
+		    ctypes.c_char_p(b'imagen2.jpg'),
+		    ctypes.c_char_p(b'imagen2.raw'),
+		    ctypes.c_int(1920),
+		    ctypes.c_int(1080)
+		)
 
-        if (day_state == 1):
+        if (day_state):
             notifications[3] = "Time of day: It is daytime!"
-        elif(day_state == 0):
+        elif(not day_state):
             notifications[3] = "Time of day: It is night time!"
         else:
             notifications[3] = "Time of day: ---"
-    except:
-        notifications[3] = "Time of day: ---"
+    except OSError as e:
+        print(e)
+        notifications[3] = "Time of day: Error"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
