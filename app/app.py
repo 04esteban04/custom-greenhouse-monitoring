@@ -106,8 +106,6 @@ def get_sensor_data():
     current_temperature = temperature[data_index]
     data_index = (data_index + 1) % len(temperature)
 
-    day_state = 0
-
     try:
         day_state = lib.is_day(
 		    ctypes.c_char_p(b'imagen2.jpg'),
