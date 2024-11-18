@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 import bcrypt
 import spidev
+import os
+import ctypes
 
 app = Flask(__name__)
 app.secret_key = "cR/N{E{4Ta#qUn5"
@@ -22,7 +24,11 @@ light_state = False
 notifications = ["General status: ---", 
                 "Temperature status: ---",
                 "Humidity status: ---", 
-                "Light status: ---"]
+                "Time of day: ---"]
+
+lib_path = os.path.join(os.path.dirname(__file__), "/usr/lib/greenhouse.so")
+lib = ctypes.CDLL(lib_path)
+lib.is_day.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_int, ctypes.c_int]
 
 # Basic routes
 @app.route('/')
@@ -102,6 +108,8 @@ def get_sensor_data():
     # Auto mode validation
     if (switch_state):
         auto_turn_lights(current_humidity, current_temperature)
+    
+    get_daytime()
 
     set_notifications(current_temperature, current_humidity)
 
@@ -137,8 +145,6 @@ def set_notifications(current_temperature, current_humidity):
         notifications[2] = f"Humidity status: High ({current_humidity} %). Consider draining water."
     else:
         notifications[2] = f"Humidity status: Optimal ({current_humidity} %)."
-
-    notifications[3] = f"Light status: {'On' if light_state else 'Off'}."
 
 def set_SPI_config():
     try:
@@ -176,6 +182,21 @@ def auto_turn_lights(current_humidity, current_temperature):
         light_state = True 
     elif (current_humidity < 60 or current_temperature < 30):
         light_state = False 
+
+def get_daytime():
+    global notifications
+
+    try:
+        day_state = lib.is_day("imagen.jpg", "imagen.raw", 1920, 1080)
+
+        if (day_state == 1):
+            notifications[3] = "Time of day: It is daytime!"
+        elif(day_state == 0):
+            notifications[3] = "Time of day: It is night time!"
+        else:
+            notifications[3] = "Time of day: ---"
+    except:
+        notifications[3] = "Time of day: ---"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8080)
